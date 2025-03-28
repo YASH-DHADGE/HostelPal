@@ -6,3 +6,4 @@ whitenoise
 psycopg2-binary  # If using PostgreSQL
 mysqlclient  # If using MySQL
 pillow  # If working with images
+echo "pandas"
