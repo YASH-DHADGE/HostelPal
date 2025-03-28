@@ -71,11 +71,11 @@ WSGI_APPLICATION = 'HostelPal.wsgi.application'
 DATABASES = {
    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Hostelpal',  # Replace with your database name
-        'USER': 'root',  # Replace with your MySQL username
-        'PASSWORD': 'root',  # Replace with your MySQL password
-        'HOST': '127.0.0.1',  # Usually 'localhost' if MySQL is on the same machine
-        'PORT': '3306',  # Default MySQL port
+        'NAME': 'defaultdb',  # Replace with your database name
+        'USER': 'avnadmin',  # Replace with your MySQL username
+        'PASSWORD': 'AVNS_4-Zbyv_xbQx_JdZMRFe',  # Replace with your MySQL password
+        'HOST': 'mysql-2787ce62-pccoer-edd7.k.aivencloud.com',  # Usually 'localhost' if MySQL is on the same machine
+        'PORT': '20864',  # Default MySQL port
     }
 }
 
