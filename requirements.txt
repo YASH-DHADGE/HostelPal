@@ -1,1 +1,8 @@
 
+Django>=4.2,<5.0
+djangorestframework
+gunicorn
+whitenoise
+psycopg2-binary  # If using PostgreSQL
+mysqlclient  # If using MySQL
+pillow  # If working with images
