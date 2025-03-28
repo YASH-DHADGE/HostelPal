@@ -1,0 +1,263 @@
+{% extends 'warden/base.html' %}
+
+{% block title %}Leave Applications{% endblock %}
+
+{% block page_title %}Leave Applications{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .filter-options {
+        display: flex;
+        gap: 15px;
+    }
+    .filter-btn {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .filter-btn.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+    .search-box {
+        display: flex;
+        align-items: center;
+    }
+    .search-box input {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        font-size: 14px;
+        min-width: 200px;
+    }
+    .search-box button {
+        padding: 8px 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+    }
+    .leave-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .leave-table th,
+    .leave-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    .leave-table th {
+        background: #f8f9fa;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .leave-table tr:last-child td {
+        border-bottom: none;
+    }
+    .student-info {
+        display: flex;
+        align-items: center;
+    }
+    .student-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #3498db;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 16px;
+        margin-right: 10px;
+    }
+    .student-name {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 3px;
+    }
+    .student-room {
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .status-approved {
+        background: #d4edda;
+        color: #155724;
+    }
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 5px;
+    }
+    .btn-small {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+    .btn-approve {
+        background: #2ecc71;
+    }
+    .btn-approve:hover {
+        background: #27ae60;
+    }
+    .btn-reject {
+        background: #e74c3c;
+    }
+    .btn-reject:hover {
+        background: #c0392b;
+    }
+    .btn-view {
+        background: #3498db;
+    }
+    .btn-view:hover {
+        background: #2980b9;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #7f8c8d;
+    }
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        color: #bdc3c7;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .pagination a {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        color: #333;
+        text-decoration: none;
+    }
+    .pagination a.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+    <div class="filter-options">
+        <button class="filter-btn active">All Applications</button>
+        <button class="filter-btn">Pending</button>
+        <button class="filter-btn">Approved</button>
+        <button class="filter-btn">Rejected</button>
+    </div>
+    <div class="search-box">
+        <input type="text" placeholder="Search by student name...">
+        <button><i class="fas fa-search"></i></button>
+    </div>
+</div>
+
+{% if leaves %}
+<table class="leave-table">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Date Range</th>
+            <th>Duration</th>
+            <th>Reason</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for leave in leaves %}
+        <tr>
+            <td>
+                <div class="student-info">
+                    <div class="student-avatar">
+                        {{ leave.student.first_name|first }}{{ leave.student.last_name|first }}
+                    </div>
+                    <div>
+                        <div class="student-name">{{ leave.student.first_name }} {{ leave.student.last_name }}</div>
+                        <div class="student-room">Room {{ leave.student.room_number }}</div>
+                    </div>
+                </div>
+            </td>
+            <td>{{ leave.from_date|date:"M d, Y" }} - {{ leave.to_date|date:"M d, Y" }}</td>
+            <td>{{ leave.duration }} days</td>
+            <td>{{ leave.reason|truncatechars:30 }}</td>
+            <td>
+                <span class="status-badge status-{{ leave.status|lower }}">
+                    {{ leave.status }}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    {% if leave.status == 'PENDING' %}
+                    <form method="post" action="{% url 'approve_leave' leave.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-small btn-approve">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'reject_leave' leave.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-small btn-reject">Reject</button>
+                    </form>
+                    {% endif %}
+                    <a href="{% url 'view_leave' leave.id %}" class="btn btn-small btn-view">View</a>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <a href="#" class="active">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">Next</a>
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">
+        <i class="fas fa-calendar-alt"></i>
+    </div>
+    <p>No leave applications to display.</p>
+</div>
+{% endif %}
+{% endblock %} 

@@ -1,0 +1,213 @@
+{% extends 'student_base.html' %}
+
+{% block title %}Complaints - HostelPal{% endblock %}
+
+{% block page_title %}Complaints & Maintenance Requests{% endblock %}
+
+{% block extra_css %}
+<style>
+    .ticket-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .status-new {
+        background: #d1ecf1;
+        color: #0c5460;
+        border-left: 3px solid #17a2b8;
+    }
+    .status-in-progress {
+        background: #fff3cd;
+        color: #856404;
+        border-left: 3px solid #ffc107;
+    }
+    .status-resolved {
+        background: #d4edda;
+        color: #155724;
+        border-left: 3px solid #28a745;
+    }
+    .status-closed {
+        background: #f8f9fa;
+        color: #6c757d;
+        border-left: 3px solid #6c757d;
+    }
+    .form-container {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .form-control:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    thead {
+        background: #f8f9fa;
+    }
+    th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .actions {
+        display: flex;
+        gap: 10px;
+    }
+    .btn-sm {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+    .btn-view {
+        background: #3498db;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+    }
+    .empty-state i {
+        font-size: 48px;
+        color: #ddd;
+        margin-bottom: 15px;
+    }
+    .empty-state h3 {
+        font-size: 18px;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    .empty-state p {
+        color: #7f8c8d;
+        margin-bottom: 15px;
+    }
+    .priority {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+    .priority-low {
+        background: #28a745;
+    }
+    .priority-medium {
+        background: #ffc107;
+    }
+    .priority-high {
+        background: #dc3545;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-exclamation-circle"></i> Submit a Complaint
+    </div>
+    <div class="card-body">
+        <form method="post" action="{% url 'submit_complaint' %}" class="form-container">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="complaint_type">Complaint Type</label>
+                    <input type="text" id="complaint_type" name="complaint_type" class="form-control" placeholder="e.g., Maintenance, Mess, Facilities" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" class="form-control" rows="5" placeholder="Please provide details of your complaint..." required></textarea>
+            </div>
+            <button type="submit" class="btn">
+                <i class="fas fa-paper-plane"></i> Submit Complaint
+            </button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-history"></i> Complaint History
+    </div>
+    <div class="card-body">
+        {% if complaints %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in complaints %}
+                    <tr>
+                        <td>{{ complaint.created_at|date:"M d, Y" }}</td>
+                        <td>{{ complaint.complaint_type }}</td>
+                        <td>{{ complaint.description|truncatechars:30 }}</td>
+                        <td>
+                            {% if complaint.resolved %}
+                            <span class="status-badge status-resolved">Resolved</span>
+                            {% else %}
+                            <span class="status-badge status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <a href="#" class="btn btn-sm btn-view">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-ticket-alt"></i>
+            <h3>No Complaints</h3>
+            <p>You haven't submitted any complaints yet.</p>
+            <p>Use the form above to submit a new complaint or maintenance request.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

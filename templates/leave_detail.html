@@ -1,0 +1,178 @@
+{% extends 'student_base.html' %}
+
+{% block title %}Leave Application Details - HostelPal{% endblock %}
+
+{% block page_title %}Leave Application Details{% endblock %}
+
+{% block extra_css %}
+<style>
+    .leave-detail-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    .leave-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    .leave-id {
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+    }
+    .leave-dates {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    .leave-status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .status-pending {
+        background: #f8f9fa;
+        color: #6c757d;
+        border-left: 3px solid #6c757d;
+    }
+    .status-approved {
+        background: #d4edda;
+        color: #155724;
+        border-left: 3px solid #28a745;
+    }
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 3px solid #dc3545;
+    }
+    .leave-body {
+        padding: 20px;
+    }
+    .leave-meta {
+        margin-bottom: 20px;
+    }
+    .meta-item {
+        margin-bottom: 10px;
+    }
+    .meta-label {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    .meta-value {
+        color: #7f8c8d;
+    }
+    .leave-reason {
+        margin-bottom: 20px;
+    }
+    .reason-label {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    .reason-text {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    .leave-footer {
+        padding: 20px;
+        border-top: 1px solid #eee;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+    }
+    .warden-comments {
+        margin-top: 20px;
+    }
+    .comments-label {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    .comments-text {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="leave-detail-card">
+    <div class="leave-header">
+        <div class="leave-id">Application #{{ leave.id }}</div>
+        <div class="leave-dates">{{ leave.from_date|date:"M d, Y" }} to {{ leave.to_date|date:"M d, Y" }}</div>
+        <div>
+            {% if leave.status == 'pending' %}
+            <span class="leave-status status-pending">Pending</span>
+            {% elif leave.status == 'approved' %}
+            <span class="leave-status status-approved">Approved</span>
+            {% else %}
+            <span class="leave-status status-rejected">Rejected</span>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="leave-body">
+        <div class="leave-meta">
+            <div class="meta-item">
+                <div class="meta-label">Days Requested</div>
+                <div class="meta-value">{{ leave.days }} day{{ leave.days|pluralize }}</div>
+            </div>
+            
+            <div class="meta-item">
+                <div class="meta-label">Applied On</div>
+                <div class="meta-value">{{ leave.application_date|date:"F d, Y, g:i A" }}</div>
+            </div>
+            
+            {% if leave.status != 'pending' %}
+            <div class="meta-item">
+                <div class="meta-label">{{ leave.status|title }} On</div>
+                <div class="meta-value">{{ leave.approval_date|date:"F d, Y, g:i A" }}</div>
+            </div>
+            
+            <div class="meta-item">
+                <div class="meta-label">{{ leave.status|title }} By</div>
+                <div class="meta-value">{{ leave.approved_by.first_name }} {{ leave.approved_by.last_name }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="leave-reason">
+            <div class="reason-label">Reason for Leave</div>
+            <div class="reason-text">{{ leave.reason|linebreaks }}</div>
+        </div>
+        
+        {% if leave.comments %}
+        <div class="warden-comments">
+            <div class="comments-label">Warden Comments</div>
+            <div class="comments-text">{{ leave.comments|linebreaks }}</div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="leave-footer">
+        <a href="{% url 'leave' %}" class="btn">
+            <i class="fas fa-arrow-left"></i> Back to Applications
+        </a>
+        
+        {% if leave.status == 'pending' %}
+        <div>
+            <a href="{% url 'edit_leave' leave.id %}" class="btn">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a href="{% url 'delete_leave' leave.id %}" class="btn" style="background: #e74c3c;">
+                <i class="fas fa-trash"></i> Delete
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

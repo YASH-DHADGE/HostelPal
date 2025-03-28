@@ -1,0 +1,453 @@
+{% extends 'student_base.html' %}
+{% load static %}
+
+{% block title %}Mess - HostelPal{% endblock %}
+
+{% block page_title %}Mess Services{% endblock %}
+
+{% block extra_css %}
+<style>
+    .mess-tabs {
+        display: flex;
+        background: #f8f9fa;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    .mess-tab {
+        flex: 1;
+        text-align: center;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+    }
+    .mess-tab.active {
+        background: #3498db;
+        color: white;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .meal-schedule {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .meal-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .meal-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 15px;
+        text-align: center;
+    }
+    .meal-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .meal-time {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    .meal-body {
+        padding: 15px;
+    }
+    .meal-items {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+    .meal-items li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+    .meal-items li:last-child {
+        border-bottom: none;
+    }
+    .meal-items li i {
+        color: #3498db;
+        margin-right: 10px;
+    }
+    .menu-day {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .day-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+    }
+    .menu-meals {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+    .menu-meal {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+    }
+    .menu-meal-title {
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #2c3e50;
+    }
+    .feedback-form {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    .form-control:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    .rating input {
+        display: none;
+    }
+    .rating label {
+        cursor: pointer;
+        font-size: 25px;
+        color: #ddd;
+        padding: 0 5px;
+    }
+    .rating label:before {
+        content: '\2605';
+    }
+    .rating input:checked ~ label {
+        color: #f39c12;
+    }
+    .rating label:hover,
+    .rating label:hover ~ label {
+        color: #f39c12;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mess-tabs">
+    <div class="mess-tab active" data-tab="schedule">Today's Schedule</div>
+    <div class="mess-tab" data-tab="menu">Weekly Menu</div>
+    <div class="mess-tab" data-tab="feedback">Feedback</div>
+    <div class="mess-tab" data-tab="attendance">My Attendance</div>
+</div>
+
+<div class="tab-content active" id="schedule">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-utensils"></i> Today's Mess Schedule
+        </div>
+        <div class="card-body">
+            <div class="meal-schedule">
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <div class="meal-title">Breakfast</div>
+                        <div class="meal-time">7:00 AM - 9:00 AM</div>
+                    </div>
+                    <div class="meal-body">
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Bread & Butter</li>
+                            <li><i class="fas fa-check"></i> Boiled Eggs</li>
+                            <li><i class="fas fa-check"></i> Oatmeal</li>
+                            <li><i class="fas fa-check"></i> Fresh Fruits</li>
+                            <li><i class="fas fa-check"></i> Coffee/Tea</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <div class="meal-title">Lunch</div>
+                        <div class="meal-time">12:00 PM - 2:00 PM</div>
+                    </div>
+                    <div class="meal-body">
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Chapati/Rice</li>
+                            <li><i class="fas fa-check"></i> Dal Fry</li>
+                            <li><i class="fas fa-check"></i> Mix Vegetable</li>
+                            <li><i class="fas fa-check"></i> Paneer Curry</li>
+                            <li><i class="fas fa-check"></i> Yogurt & Salad</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <div class="meal-title">Dinner</div>
+                        <div class="meal-time">7:00 PM - 9:00 PM</div>
+                    </div>
+                    <div class="meal-body">
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Chapati/Rice</li>
+                            <li><i class="fas fa-check"></i> Yellow Dal</li>
+                            <li><i class="fas fa-check"></i> Chana Masala</li>
+                            <li><i class="fas fa-check"></i> Veg Pulao</li>
+                            <li><i class="fas fa-check"></i> Sweet & Salad</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="tab-content" id="menu">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-calendar-week"></i> Weekly Mess Menu
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <img src="https://d3jmn01ri1fzgl.cloudfront.net/photoadking/webp_thumbnail/mess-menu-template-jm2xopb7e152f8.webp" 
+                     alt="Weekly Mess Menu" 
+                     class="img-fluid rounded shadow" 
+                     style="max-width: 100%; height: auto;"
+                     onerror="this.onerror=null; this.src='{% static 'images/mess-menu-template.webp' %}'">
+            </div>
+            
+            <div class="menu-day">
+                <div class="day-title">Monday</div>
+                <div class="menu-meals">
+                    <div class="menu-meal">
+                        <div class="menu-meal-title">Breakfast</div>
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Bread & Butter</li>
+                            <li><i class="fas fa-check"></i> Boiled Eggs</li>
+                            <li><i class="fas fa-check"></i> Coffee/Tea</li>
+                        </ul>
+                    </div>
+                    <div class="menu-meal">
+                        <div class="menu-meal-title">Lunch</div>
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Chapati/Rice</li>
+                            <li><i class="fas fa-check"></i> Dal Fry</li>
+                            <li><i class="fas fa-check"></i> Salad</li>
+                        </ul>
+                    </div>
+                    <div class="menu-meal">
+                        <div class="menu-meal-title">Dinner</div>
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Chapati/Rice</li>
+                            <li><i class="fas fa-check"></i> Chana Masala</li>
+                            <li><i class="fas fa-check"></i> Sweet</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="menu-day">
+                <div class="day-title">Tuesday</div>
+                <div class="menu-meals">
+                    <div class="menu-meal">
+                        <div class="menu-meal-title">Breakfast</div>
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Poha</li>
+                            <li><i class="fas fa-check"></i> Fruits</li>
+                            <li><i class="fas fa-check"></i> Coffee/Tea</li>
+                        </ul>
+                    </div>
+                    <div class="menu-meal">
+                        <div class="menu-meal-title">Lunch</div>
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Chapati/Rice</li>
+                            <li><i class="fas fa-check"></i> Rajma</li>
+                            <li><i class="fas fa-check"></i> Salad</li>
+                        </ul>
+                    </div>
+                    <div class="menu-meal">
+                        <div class="menu-meal-title">Dinner</div>
+                        <ul class="meal-items">
+                            <li><i class="fas fa-check"></i> Chapati/Rice</li>
+                            <li><i class="fas fa-check"></i> Paneer Curry</li>
+                            <li><i class="fas fa-check"></i> Salad</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Add more days as needed -->
+        </div>
+    </div>
+</div>
+
+<div class="tab-content" id="feedback">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-comment-alt"></i> Mess Feedback
+        </div>
+        <div class="card-body">
+            <form method="post" action="{% url 'submit_mess_feedback' %}" class="feedback-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="meal">Meal</label>
+                        <select id="meal" name="meal" class="form-control" required>
+                            <option value="">Select Meal</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+            </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Food Quality Rating</label>
+                    <div class="rating">
+                        <input type="radio" id="star5" name="rating" value="5" />
+                        <label for="star5"></label>
+                        <input type="radio" id="star4" name="rating" value="4" />
+                        <label for="star4"></label>
+                        <input type="radio" id="star3" name="rating" value="3" />
+                        <label for="star3"></label>
+                        <input type="radio" id="star2" name="rating" value="2" />
+                        <label for="star2"></label>
+                        <input type="radio" id="star1" name="rating" value="1" />
+                        <label for="star1"></label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="feedback">Your Feedback</label>
+                    <textarea id="feedback" name="feedback" class="form-control" required placeholder="Please provide your detailed feedback about the meal..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="suggestions">Suggestions for Improvement</label>
+                    <textarea id="suggestions" name="suggestions" class="form-control" placeholder="Any suggestions to improve the mess service..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-paper-plane"></i> Submit Feedback
+                </button>
+        </form>
+        </div>
+    </div>
+</div>
+
+<div class="tab-content" id="attendance">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-clipboard-check"></i> My Mess Attendance
+        </div>
+        <div class="card-body">
+            <div class="meal-schedule">
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <div class="meal-title">Breakfast</div>
+                        <div class="meal-time">Status: Selected</div>
+                    </div>
+                    <div class="meal-body" style="text-align: center;">
+                        <div style="font-size: 32px; margin: 10px 0; color: #2ecc71;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p>You've indicated that you'll eat breakfast today.</p>
+                        <p>If you want to change this, update your preferences on the home page.</p>
+                    </div>
+                </div>
+                
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <div class="meal-title">Lunch</div>
+                        <div class="meal-time">Status: Selected</div>
+                    </div>
+                    <div class="meal-body" style="text-align: center;">
+                        <div style="font-size: 32px; margin: 10px 0; color: #2ecc71;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <p>You've indicated that you'll eat lunch today.</p>
+                        <p>If you want to change this, update your preferences on the home page.</p>
+                    </div>
+                </div>
+                
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <div class="meal-title">Dinner</div>
+                        <div class="meal-time">Status: Not Selected</div>
+                    </div>
+                    <div class="meal-body" style="text-align: center;">
+                        <div style="font-size: 32px; margin: 10px 0; color: #e74c3c;">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <p>You've indicated that you'll skip dinner today.</p>
+                        <p>If you want to change this, update your preferences on the home page.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab switching
+        const tabs = document.querySelectorAll('.mess-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+        });
+    </script>
+{% endblock %}

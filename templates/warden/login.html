@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostelPal - Warden Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            display: flex;
+            width: 900px;
+            max-width: 95%;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+        
+        .login-image {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1606761568499-6d2451b23c66?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80') center center;
+            background-size: cover;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .login-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(44, 62, 80, 0.7);
+        }
+        
+        .logo {
+            position: relative;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+            z-index: 1;
+        }
+        
+        .tagline {
+            position: relative;
+            color: white;
+            font-size: 18px;
+            z-index: 1;
+            max-width: 80%;
+        }
+        
+        .login-form {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .login-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+            outline: none;
+        }
+        
+        .form-icon {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-login:hover {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .auth-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .auth-footer a {
+            color: #3498db;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .auth-footer a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+        
+        .warden-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .warden-badge i {
+            margin-right: 5px;
+            font-size: 10px;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #f5c6cb;
+        }
+        
+        .student-login-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .student-login-link a {
+            display: inline-flex;
+            align-items: center;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .student-login-link a i {
+            margin-right: 8px;
+        }
+        
+        .student-login-link a:hover {
+            color: #2980b9;
+            transform: translateX(5px);
+        }
+        
+        .secure-note {
+            display: flex;
+            align-items: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .secure-note i {
+            color: #2ecc71;
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            
+            .login-image {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-image">
+            <div class="logo">HostelPal</div>
+            <div class="tagline">Administrative portal for hostel management. Secure, efficient, and streamlined.</div>
+        </div>
+        
+        <div class="login-form">
+            <div class="login-header">
+                <h1>Warden Login <span class="warden-badge"><i class="fas fa-shield-alt"></i> Admin</span></h1>
+                <p>Access the hostel management dashboard</p>
+            </div>
+            
+            {% if error_message %}
+            <div class="error-message">
+                {{ error_message }}
+            </div>
+            {% endif %}
+            
+            <form method="post" action="{% url 'warden_login' %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <i class="fas fa-user form-icon"></i>
+                    <input type="text" name="username" class="form-control" placeholder="Warden Username" required>
+                </div>
+                
+                <div class="form-group">
+                    <i class="fas fa-lock form-icon"></i>
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    Secure Login
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <small>Contact administrator if you forgot your password.</small>
+            </div>
+            
+            <div class="secure-note">
+                <i class="fas fa-lock"></i> This is a secure login area for hostel administrative staff only.
+            </div>
+            
+            <div class="student-login-link">
+                <a href="{% url 'login' %}">
+                    <i class="fas fa-graduation-cap"></i> Login as Student
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

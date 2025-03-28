@@ -1,0 +1,166 @@
+{% extends 'warden/base.html' %}
+
+{% block title %}View Leave Request{% endblock %}
+
+{% block page_title %}Leave Request Details{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'warden_leave_applications' %}" class="btn btn-primary">
+    <i class="fas fa-arrow-left"></i> Back to Leave Applications
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .leave-details {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .leave-header {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+    .student-info {
+        display: flex;
+        align-items: center;
+    }
+    .student-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #3498db;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 24px;
+        margin-right: 20px;
+    }
+    .student-name {
+        font-size: 20px;
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+    .student-room {
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+    .leave-body {
+        padding: 20px;
+    }
+    .detail-row {
+        margin-bottom: 20px;
+        display: flex;
+    }
+    .detail-label {
+        width: 150px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .detail-value {
+        flex: 1;
+        color: #34495e;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .status-approved {
+        background: #d4edda;
+        color: #155724;
+    }
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .leave-reason {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 10px;
+        white-space: pre-line;
+        line-height: 1.5;
+    }
+    .action-buttons {
+        margin-top: 30px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="leave-details">
+    <div class="leave-header">
+        <div class="student-info">
+            <div class="student-avatar">
+                {{ leave.student.first_name|first }}{{ leave.student.last_name|first }}
+            </div>
+            <div>
+                <div class="student-name">{{ leave.student.first_name }} {{ leave.student.last_name }}</div>
+                <div class="student-room">Room {{ leave.student.room_number }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="leave-body">
+        <div class="detail-row">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+                <span class="status-badge status-{{ leave.status|lower }}">
+                    {{ leave.status|title }}
+                </span>
+            </div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Leave Period</div>
+            <div class="detail-value">{{ leave.from_date|date:"F d, Y" }} to {{ leave.to_date|date:"F d, Y" }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Duration</div>
+            <div class="detail-value">{{ leave.duration }} days</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Application Date</div>
+            <div class="detail-value">{{ leave.application_date|date:"F d, Y" }}</div>
+        </div>
+        
+        <div class="detail-row">
+            <div class="detail-label">Reason for Leave</div>
+            <div class="detail-value">
+                <div class="leave-reason">{{ leave.reason }}</div>
+            </div>
+        </div>
+        
+        {% if leave.status == 'pending' %}
+        <div class="action-buttons">
+            <form method="post" action="{% url 'reject_leave' leave.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Reject Leave</button>
+            </form>
+            
+            <form method="post" action="{% url 'approve_leave' leave.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Approve Leave</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

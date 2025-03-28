@@ -1,0 +1,97 @@
+/* Background gradient */
+.gradient-custom {
+    background: linear-gradient(to right, #FFB756, #FBDBB1);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card styling */
+.card {
+    background: #BC4749;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    padding:50px;
+    border-radius: 1rem;
+}
+body{
+    font-family: 'Short Stack', cursive;
+}
+h1{
+    font-size: 50px;
+    color: white;
+}
+p{
+    font-size: 20px;
+}
+/* Form input styling */
+.form-control {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 10px;
+    font-size: 1rem;
+    transition: 0.3s ease-in-out;
+}
+
+
+/* Labels */
+.form-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Button styling */
+.btn-outline-light {
+    border: 2px solid #e16812;
+    color: #060606;
+    padding: 10px 30px;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    margin-left: 145px;
+    transition: all 0.3s ease-in-out;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px; /* Adds space between fields */
+}
+
+.form-label {
+    font-size: 18px;
+    color: white;
+    margin-bottom: 5px; /* Adds space between label and input */
+}
+
+.form-control {
+    width: 90%;
+    height: 30px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: transparent;
+    color: white;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-outline-light:hover {
+    background: #e0a708;
+    color: black;
+}
+
+/* Social media icons */
+.text-white i {
+    transition: 0.3s;
+}
+
+.text-white i:hover {
+    color: #00c6ff;
+    transform: scale(1.2);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+}

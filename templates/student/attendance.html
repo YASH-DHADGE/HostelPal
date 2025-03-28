@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Records{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Attendance Records - {{ month_name }} {{ year }}</h5>
+                    <div>
+                        <a href="{{ prev_month_link }}" class="btn btn-sm btn-light me-2">
+                            <i class="fas fa-chevron-left"></i> Previous Month
+                        </a>
+                        <a href="{{ next_month_link }}" class="btn btn-sm btn-light">
+                            Next Month <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Attendance Rate</h5>
+                                    <h2 class="text-primary">{{ attendance_stats.attendance_percentage }}%</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row h-100">
+                                <div class="col-md-3">
+                                    <div class="card h-100 bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <h6>Present</h6>
+                                            <h3>{{ attendance_stats.present_days }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card h-100 bg-danger text-white">
+                                        <div class="card-body text-center">
+                                            <h6>Absent</h6>
+                                            <h3>{{ attendance_stats.absent_days }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card h-100 bg-warning text-dark">
+                                        <div class="card-body text-center">
+                                            <h6>On Leave</h6>
+                                            <h3>{{ attendance_stats.leave_days }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card h-100 bg-secondary text-white">
+                                        <div class="card-body text-center">
+                                            <h6>Not Marked</h6>
+                                            <h3>{{ attendance_stats.not_marked }}</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Sun</th>
+                                            <th>Mon</th>
+                                            <th>Tue</th>
+                                            <th>Wed</th>
+                                            <th>Thu</th>
+                                            <th>Fri</th>
+                                            <th>Sat</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% with first_day=calendar_data.keys|first %}
+                                        {% with first_weekday=first_day.weekday %}
+                                        
+                                        {% with first_sunday=first_day|date:"w"|add:"-0"|slugify %}
+                                        {% if first_sunday != "0" %}
+                                        <tr>
+                                            {% for i in "1234567" %}
+                                            {% if forloop.counter0 < first_day.weekday %}
+                                            <td class="bg-light"></td>
+                                            {% else %}
+                                            {% with current_date=first_day|date:"Y-m-d"|add:forloop.counter0|add:"-"|add:first_day.weekday %}
+                                            {% with record=calendar_data|get_item:current_date %}
+                                            <td class="{% if current_date == today|date:'Y-m-d' %}border border-primary{% endif %}">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold">{{ current_date|date:"d" }}</span>
+                                                    {% if record.status == 'present' %}
+                                                    <span class="badge bg-success rounded-pill">Present</span>
+                                                    {% elif record.status == 'absent' %}
+                                                    <span class="badge bg-danger rounded-pill">Absent</span>
+                                                    {% elif record.status == 'leave' %}
+                                                    <span class="badge bg-warning rounded-pill">Leave</span>
+                                                    {% else %}
+                                                    <span class="badge bg-secondary rounded-pill">Not Marked</span>
+                                                    {% endif %}
+                                                </div>
+                                                {% if record.record and record.record.comment %}
+                                                <small class="text-muted d-block mt-1">{{ record.record.comment }}</small>
+                                                {% endif %}
+                                            </td>
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                        {% endif %}
+                                        {% endwith %}
+                                        
+                                        {% comment %}Display remaining weeks{% endcomment %}
+                                        {% with weeks=calendar_data.items|length|add:first_weekday|floatformat:0|divisibleby:7|add:1 %}
+                                        {% for week in weeks %}
+                                        <tr>
+                                            {% for day in "1234567" %}
+                                            {% with day_index=forloop.counter0|add:week|multiply:7|add:day|add:"-"|add:first_weekday %}
+                                            {% if day_index < calendar_data.items|length %}
+                                            {% with day_date=calendar_data.keys|slice:day_index|last %}
+                                            {% with record=calendar_data|get_item:day_date %}
+                                            <td class="{% if day_date == today|date:'Y-m-d' %}border border-primary{% endif %}">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="fw-bold">{{ day_date|date:"d" }}</span>
+                                                    {% if record.status == 'present' %}
+                                                    <span class="badge bg-success rounded-pill">Present</span>
+                                                    {% elif record.status == 'absent' %}
+                                                    <span class="badge bg-danger rounded-pill">Absent</span>
+                                                    {% elif record.status == 'leave' %}
+                                                    <span class="badge bg-warning rounded-pill">Leave</span>
+                                                    {% else %}
+                                                    <span class="badge bg-secondary rounded-pill">Not Marked</span>
+                                                    {% endif %}
+                                                </div>
+                                                {% if record.record and record.record.comment %}
+                                                <small class="text-muted d-block mt-1">{{ record.record.comment }}</small>
+                                                {% endif %}
+                                            </td>
+                                            {% endwith %}
+                                            {% endwith %}
+                                            {% else %}
+                                            <td class="bg-light"></td>
+                                            {% endif %}
+                                            {% endwith %}
+                                            {% endfor %}
+                                        </tr>
+                                        {% endfor %}
+                                        {% endwith %}
+                                        
+                                        {% endwith %}
+                                        {% endwith %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Recent Attendance Records</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Comments</th>
+                                    <th>Marked by</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in calendar_data.values %}
+                                    {% if record.record %}
+                                    <tr>
+                                        <td>{{ record.record.date|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if record.status == 'present' %}
+                                            <span class="badge bg-success">Present</span>
+                                            {% elif record.status == 'absent' %}
+                                            <span class="badge bg-danger">Absent</span>
+                                            {% elif record.status == 'leave' %}
+                                            <span class="badge bg-warning text-dark">On Leave</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ record.record.check_in|default:"-" }}</td>
+                                        <td>{{ record.record.check_out|default:"-" }}</td>
+                                        <td>{{ record.record.comment|default:"-" }}</td>
+                                        <td>{{ record.record.marked_by|default:"System" }}</td>
+                                    </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">No attendance records found</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if error %}
+<div class="alert alert-danger mt-4">
+    {{ error }}
+</div>
+{% endif %}
+{% endblock %} 

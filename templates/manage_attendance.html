@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Attendance - HostelPal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h2 {
+            margin: 0;
+        }
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+        .navbar-links a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .date-selector {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .date-selector label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        .date-selector input[type="date"] {
+            padding: 10px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-right: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #1669d6;
+        }
+        .attendance-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        .attendance-table th {
+            background-color: #f1f3f4;
+            color: #202124;
+            text-align: left;
+            padding: 15px;
+            font-weight: 500;
+        }
+        .attendance-table td {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        .radio-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .radio-label input {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        .present-label {
+            color: #137333;
+        }
+        .absent-label {
+            color: #ea4335;
+        }
+        .submit-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .save-btn {
+            padding: 12px 25px;
+            font-size: 16px;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+        .message.error {
+            background-color: #fdeded;
+            color: #ea4335;
+        }
+        .empty-state {
+            background-color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            color: #5f6368;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>HostelPal - Warden Portal</h2>
+        <div class="navbar-links">
+            <a href="{% url 'warden_dashboard' %}">Dashboard</a>
+            <a href="{% url 'manage_notices' %}">Notices</a>
+            <a href="{% url 'manage_attendance' %}">Attendance</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <h1>Manage Student Attendance</h1>
+        
+        <form method="post" action="{% url 'manage_attendance' %}">
+            {% csrf_token %}
+            
+            <div class="date-selector">
+                <label for="attendance_date">Select Date:</label>
+                <input type="date" id="attendance_date" name="attendance_date" value="{{ today|date:'Y-m-d' }}">
+                <button type="submit" name="check_date" class="btn">Load Date</button>
+            </div>
+            
+            {% if students %}
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Room No</th>
+                            <th>Student Name</th>
+                            <th>Attendance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>{{ student.room_number }}</td>
+                            <td>{{ student.first_name }} {{ student.last_name }}</td>
+                            <td>
+                                <div class="radio-group">
+                                    <label class="radio-label present-label">
+                                        <input type="radio" name="student_{{ student.id }}" value="present" 
+                                        {% if student.id in attendance_records and attendance_records|get_item:student.id %}checked{% endif %}>
+                                        Present
+                                    </label>
+                                    <label class="radio-label absent-label">
+                                        <input type="radio" name="student_{{ student.id }}" value="absent"
+                                        {% if student.id in attendance_records and not attendance_records|get_item:student.id %}checked{% endif %}>
+                                        Absent
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+                <div class="submit-container">
+                    <button type="submit" class="btn save-btn">Save Attendance</button>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No students found in the system.</p>
+                    <p>Add students first to mark attendance.</p>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html> 

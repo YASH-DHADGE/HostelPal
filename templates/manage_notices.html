@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Notices - HostelPal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h2 {
+            margin: 0;
+        }
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+        .navbar-links a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #1a73e8;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .btn:hover {
+            background-color: #1669d6;
+        }
+        .notices-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        .notice-item {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .notice-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        .important-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #ea4335;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .notice-date {
+            color: #5f6368;
+            font-size: 14px;
+        }
+        .notice-content {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .notice-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-edit {
+            background-color: #fbbc04;
+            color: #202124;
+        }
+        .btn-edit:hover {
+            background-color: #f9ab00;
+        }
+        .btn-delete {
+            background-color: #ea4335;
+        }
+        .btn-delete:hover {
+            background-color: #d33828;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+        .message.error {
+            background-color: #fdeded;
+            color: #ea4335;
+        }
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #5f6368;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>HostelPal - Warden Portal</h2>
+        <div class="navbar-links">
+            <a href="{% url 'warden_dashboard' %}">Dashboard</a>
+            <a href="{% url 'manage_notices' %}">Notices</a>
+            <a href="{% url 'manage_attendance' %}">Attendance</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="header">
+            <h1>Manage Notices</h1>
+            <a href="{% url 'create_notice' %}" class="btn">Create New Notice</a>
+        </div>
+        
+        <div class="notices-container">
+            {% for notice in notices %}
+            <div class="notice-item">
+                <div class="notice-header">
+                    <h3 class="notice-title">
+                        {{ notice.title }}
+                        {% if notice.important %}
+                        <span class="important-badge">Important</span>
+                        {% endif %}
+                    </h3>
+                    <span class="notice-date">{{ notice.date_posted|date:"F d, Y" }}</span>
+                </div>
+                <div class="notice-content">
+                    {{ notice.content|linebreaks }}
+                </div>
+                <div class="notice-actions">
+                    <a href="{% url 'edit_notice' notice.id %}" class="btn btn-edit">Edit</a>
+                    <a href="{% url 'delete_notice' notice.id %}" class="btn btn-delete">Delete</a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+                <p>No notices have been created yet.</p>
+                <p>Click the "Create New Notice" button to get started.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html> 

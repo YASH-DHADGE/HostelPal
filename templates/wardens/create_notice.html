@@ -1,0 +1,84 @@
+{% extends 'warden/base.html' %}
+
+{% block title %}Create Notice{% endblock %}
+
+{% block page_title %}Create New Notice{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'manage_notices' %}" class="btn btn-primary">
+    <i class="fas fa-arrow-left"></i> Back to Notices
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #dcdde1;
+        border-radius: 5px;
+        font-size: 15px;
+        transition: all 0.3s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+    textarea.form-control {
+        min-height: 200px;
+        resize: vertical;
+    }
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+    }
+    .checkbox-group input {
+        margin-right: 10px;
+    }
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'create_notice' %}">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="title">Notice Title</label>
+        <input type="text" id="title" name="title" class="form-control" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="content">Notice Content</label>
+        <textarea id="content" name="content" class="form-control" required></textarea>
+    </div>
+    
+    <div class="form-group checkbox-group">
+        <input type="checkbox" id="important" name="important">
+        <label for="important">Mark as Important</label>
+    </div>
+    
+    <div class="form-actions">
+        <a href="{% url 'manage_notices' %}" class="btn btn-danger">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+        <button type="submit" class="btn btn-success">
+            <i class="fas fa-check"></i> Create Notice
+        </button>
+    </div>
+</form>
+{% endblock %} 

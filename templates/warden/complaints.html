@@ -1,0 +1,249 @@
+{% extends 'warden/base.html' %}
+
+{% block title %}Manage Complaints{% endblock %}
+
+{% block page_title %}Student Complaints{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .filter-options {
+        display: flex;
+        gap: 15px;
+    }
+    .filter-btn {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+    .filter-btn.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+    .search-box {
+        display: flex;
+        align-items: center;
+    }
+    .search-box input {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        font-size: 14px;
+        min-width: 200px;
+    }
+    .search-box button {
+        padding: 8px 15px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+    }
+    .complaints-list {
+        margin-top: 20px;
+    }
+    .complaint-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+    .complaint-header {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+    }
+    .complaint-type {
+        font-weight: 600;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+    }
+    .complaint-badge {
+        margin-left: 10px;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .badge-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .badge-resolved {
+        background: #d4edda;
+        color: #155724;
+    }
+    .complaint-info {
+        font-size: 13px;
+        color: #7f8c8d;
+    }
+    .complaint-body {
+        padding: 20px;
+    }
+    .student-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .student-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #3498db;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 18px;
+        margin-right: 15px;
+    }
+    .student-details {
+        flex: 1;
+    }
+    .student-name {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 3px;
+    }
+    .student-room {
+        font-size: 13px;
+        color: #7f8c8d;
+    }
+    .complaint-text {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        white-space: pre-line;
+    }
+    .complaint-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    .btn-resolve {
+        background: #2ecc71;
+    }
+    .btn-resolve:hover {
+        background: #27ae60;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .pagination a {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        color: #333;
+        text-decoration: none;
+    }
+    .pagination a.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        color: #7f8c8d;
+    }
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        color: #bdc3c7;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+    <div class="filter-options">
+        <button class="filter-btn active">All Complaints</button>
+        <button class="filter-btn">Pending</button>
+        <button class="filter-btn">Resolved</button>
+    </div>
+    <div class="search-box">
+        <input type="text" placeholder="Search complaints...">
+        <button><i class="fas fa-search"></i></button>
+    </div>
+</div>
+
+{% if complaints %}
+<div class="complaints-list">
+    {% for complaint in complaints %}
+    <div class="complaint-card">
+        <div class="complaint-header">
+            <div class="complaint-type">
+                {{ complaint.complaint_type }}
+                {% if complaint.resolved|default:False %}
+                <span class="complaint-badge badge-resolved">Resolved</span>
+                {% else %}
+                <span class="complaint-badge badge-pending">Pending</span>
+                {% endif %}
+            </div>
+            <div class="complaint-info">Submitted on {{ complaint.created_at|default:"N/A"|date:"F d, Y" }}</div>
+        </div>
+        <div class="complaint-body">
+            <div class="student-info">
+                <div class="student-avatar">
+                    {{ complaint.student.first_name|first }}{{ complaint.student.last_name|first }}
+                </div>
+                <div class="student-details">
+                    <div class="student-name">{{ complaint.student.first_name }} {{ complaint.student.last_name }}</div>
+                    <div class="student-room">Room {{ complaint.student.room_number }}</div>
+                </div>
+            </div>
+            <div class="complaint-text">{{ complaint.description }}</div>
+            <div class="complaint-actions">
+                {% if not complaint.resolved %}
+                <form method="post" action="{% url 'resolve_complaint' complaint.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-resolve">Mark as Resolved</button>
+                </form>
+                {% endif %}
+                <a href="{% url 'reply_complaint' complaint.id %}" class="btn">Reply to Student</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    <a href="#" class="active">1</a>
+    <a href="#">2</a>
+    <a href="#">3</a>
+    <a href="#">Next</a>
+</div>
+{% else %}
+<div class="empty-state">
+    <div class="empty-icon">
+        <i class="fas fa-clipboard-check"></i>
+    </div>
+    <p>No complaints to display.</p>
+</div>
+{% endif %}
+{% endblock %} 

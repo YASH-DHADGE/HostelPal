@@ -1,0 +1,139 @@
+{% extends 'warden/base.html' %}
+
+{% block title %}Reply to Complaint{% endblock %}
+
+{% block page_title %}Reply to Student Complaint{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'warden_complaints' %}" class="btn btn-primary">
+    <i class="fas fa-arrow-left"></i> Back to Complaints
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .complaint-details {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+    .student-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .student-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #3498db;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 18px;
+        margin-right: 15px;
+    }
+    .student-details {
+        flex: 1;
+    }
+    .student-name {
+        font-weight: 500;
+        color: #2c3e50;
+        margin-bottom: 3px;
+    }
+    .student-room {
+        font-size: 13px;
+        color: #7f8c8d;
+    }
+    .complaint-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+    .complaint-type {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .complaint-content {
+        background: white;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        line-height: 1.5;
+        white-space: pre-line;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 14px;
+    }
+    textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+    }
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="complaint-details">
+    <div class="student-info">
+        <div class="student-avatar">
+            {{ complaint.student.first_name|first }}{{ complaint.student.last_name|first }}
+        </div>
+        <div class="student-details">
+            <div class="student-name">{{ complaint.student.first_name }} {{ complaint.student.last_name }}</div>
+            <div class="student-room">Room {{ complaint.student.room_number }}</div>
+        </div>
+    </div>
+    
+    <div class="complaint-meta">
+        <div class="complaint-type">{{ complaint.complaint_type }}</div>
+        <div class="complaint-date">Submitted on {{ complaint.created_at|date:"F d, Y" }}</div>
+    </div>
+    
+    <div class="complaint-content">{{ complaint.description }}</div>
+    
+    {% if complaint.reply %}
+    <div class="previous-reply">
+        <h4>Previous Reply</h4>
+        <div class="complaint-content">{{ complaint.reply }}</div>
+        <div class="reply-date">Replied on {{ complaint.replied_at|date:"F d, Y" }}</div>
+    </div>
+    {% endif %}
+</div>
+
+<form method="post" action="{% url 'reply_complaint' complaint.id %}">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label class="form-label">Your Reply</label>
+        <textarea class="form-control" name="reply" placeholder="Type your response to the student..." required>{% if complaint.reply %}{{ complaint.reply }}{% endif %}</textarea>
+    </div>
+    
+    <div class="form-actions">
+        <a href="{% url 'warden_complaints' %}" class="btn btn-danger">Cancel</a>
+        <button type="submit" class="btn btn-success">Send Reply</button>
+    </div>
+</form>
+{% endblock %} 

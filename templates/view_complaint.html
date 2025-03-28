@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <h1>Complaints</h1>
+</head> 
+    <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Sr. no.</th>
+        <th scope="col">Complaint type</th>
+        <th scope="col">Despcription</th>
+        
+      </tr>
+    </thead>
+    <tbody>
+        {% for complaint in complaints %}
+        <tr>
+            <th scope="row">{{ complaint.id }}</th>
+            <td>{{ complaint.complaint_type }}</td>
+            <td>{{ complaint.description }}</td>
+        </tr>
+        {% endfor %}
+        
+      
+      
+    </tbody>
+  </table>
+  </html>

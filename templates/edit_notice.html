@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Notice - HostelPal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #1a73e8;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h2 {
+            margin: 0;
+        }
+        .navbar-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 500;
+        }
+        .navbar-links a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #202124;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+        textarea {
+            height: 200px;
+            resize: vertical;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-group input {
+            margin-right: 10px;
+            width: auto;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #1a73e8;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1669d6;
+        }
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: #202124;
+        }
+        .btn-secondary:hover {
+            background-color: #e8eaed;
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .message.success {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+        .message.error {
+            background-color: #fdeded;
+            color: #ea4335;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>HostelPal - Warden Portal</h2>
+        <div class="navbar-links">
+            <a href="{% url 'warden_dashboard' %}">Dashboard</a>
+            <a href="{% url 'manage_notices' %}">Notices</a>
+            <a href="{% url 'manage_attendance' %}">Attendance</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <h1>Edit Notice</h1>
+        
+        <div class="form-container">
+            <form method="post" action="{% url 'edit_notice' notice.id %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="title">Notice Title</label>
+                    <input type="text" id="title" name="title" value="{{ notice.title }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Notice Content</label>
+                    <textarea id="content" name="content" required>{{ notice.content }}</textarea>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="important" name="important" {% if notice.important %}checked{% endif %}>
+                    <label for="important">Mark as Important</label>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{% url 'manage_notices' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Notice</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

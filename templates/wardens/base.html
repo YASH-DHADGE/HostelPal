@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Warden Portal{% endblock %} | HostelPal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: #f5f6fa;
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 260px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            position: fixed;
+            height: 100vh;
+            transition: all 0.3s;
+        }
+        .sidebar-header {
+            padding: 20px;
+            background: #1a2530;
+            text-align: center;
+        }
+        .sidebar-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        .menu {
+            padding: 15px 0;
+        }
+        .menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            color: #ecf0f1;
+            text-decoration: none;
+        }
+        .menu-item:hover {
+            background: #34495e;
+        }
+        .menu-item.active {
+            background: #3498db;
+        }
+        .menu-item i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+        .menu-item span {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .logout {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+        .btn-logout i {
+            margin-right: 10px;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .page-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .content {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .messages {
+            margin-bottom: 20px;
+        }
+        .message {
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+        .btn i {
+            margin-right: 5px;
+        }
+        .btn-primary {
+            background: #3498db;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .btn-success {
+            background: #2ecc71;
+        }
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        .btn-danger {
+            background: #e74c3c;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>HostelPal</h3>
+            <p>Warden Administration</p>
+        </div>
+        
+        <div class="menu">
+            <a href="{% url 'warden_dashboard' %}" class="menu-item {% if request.path == '/wardens/dashboard/' %}active{% endif %}">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            
+            <a href="{% url 'warden_complaints' %}" class="menu-item {% if 'complaints' in request.path %}active{% endif %}">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Complaints</span>
+            </a>
+            
+            <a href="{% url 'warden_leave_applications' %}" class="menu-item {% if 'leaves' in request.path %}active{% endif %}">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Leave Applications</span>
+            </a>
+            
+            <a href="{% url 'manage_notices' %}" class="menu-item {% if 'notices' in request.path %}active{% endif %}">
+                <i class="fas fa-bullhorn"></i>
+                <span>Notices</span>
+            </a>
+            
+            <a href="{% url 'manage_attendance' %}" class="menu-item {% if 'attendance' in request.path %}active{% endif %}">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Attendance</span>
+            </a>
+            
+            <a href="{% url 'warden_chat' %}" class="menu-item {% if 'chat' in request.path %}active{% endif %}">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+            </a>
+        </div>
+        
+        <div class="logout">
+            <a href="{% url 'logout' %}" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        <div class="header">
+            <h1 class="page-title">{% block page_title %}Dashboard{% endblock %}</h1>
+            
+            {% block header_actions %}{% endblock %}
+        </div>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

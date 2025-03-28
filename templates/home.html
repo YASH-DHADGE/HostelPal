@@ -1,0 +1,278 @@
+{% extends 'student_base.html' %}
+
+{% block title %}Home - HostelPal{% endblock %}
+
+{% block page_title %}Student Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        font-size: 24px;
+        color: white;
+    }
+    .icon-blue { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .icon-green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+    .icon-orange { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .icon-red { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    
+    .stat-value {
+        font-size: 28px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    .stat-label {
+        font-size: 14px;
+        color: #7f8c8d;
+        text-align: center;
+    }
+    .meal-selection {
+        margin-bottom: 30px;
+    }
+    .meal-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .meal-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .meal-header {
+        padding: 15px;
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        text-align: center;
+        font-weight: 500;
+    }
+    .meal-body {
+        padding: 20px;
+        text-align: center;
+    }
+    .meal-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+        color: #3498db;
+    }
+    .meal-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        margin: 10px 0;
+    }
+    .meal-toggle input { 
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #2ecc71;
+    }
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2ecc71;
+    }
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+    .meal-status {
+        margin-top: 10px;
+        font-weight: 500;
+    }
+    .status-yes { color: #2ecc71; }
+    .status-no { color: #e74c3c; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Meal Selection Section -->
+<div class="card meal-selection">
+    <div class="card-header">
+        <i class="fas fa-utensils"></i> Today's Mess Attendance
+    </div>
+    <div class="card-body">
+        <p class="mb-4">Please indicate which meals you will be taking in the mess today:</p>
+        
+        <form method="post" action="{% url 'update_today_meal' %}">
+            {% csrf_token %}
+            
+            <div class="meal-container">
+                <div class="meal-card">
+                    <div class="meal-header">Breakfast</div>
+                    <div class="meal-body">
+                        <div class="meal-icon">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <label class="meal-toggle">
+                            <input type="checkbox" name="breakfast" {% if breakfast_selected %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="meal-status {% if breakfast_selected %}status-yes{% else %}status-no{% endif %}">
+                            {% if breakfast_selected %}I'll eat breakfast{% else %}I'll skip breakfast{% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="meal-card">
+                    <div class="meal-header">Lunch</div>
+                    <div class="meal-body">
+                        <div class="meal-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <label class="meal-toggle">
+                            <input type="checkbox" name="lunch" {% if lunch_selected %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="meal-status {% if lunch_selected %}status-yes{% else %}status-no{% endif %}">
+                            {% if lunch_selected %}I'll eat lunch{% else %}I'll skip lunch{% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="meal-card">
+                    <div class="meal-header">Dinner</div>
+                    <div class="meal-body">
+                        <div class="meal-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <label class="meal-toggle">
+                            <input type="checkbox" name="dinner" {% if dinner_selected %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="meal-status {% if dinner_selected %}status-yes{% else %}status-no{% endif %}">
+                            {% if dinner_selected %}I'll eat dinner{% else %}I'll skip dinner{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="btn">
+                    <i class="fas fa-save"></i> Save Preferences
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="card-footer">
+        <small>Last updated: {% if meal_last_updated %}{{ meal_last_updated }}{% else %}Never{% endif %}</small>
+        </div>
+    </div>
+
+<!-- Dashboard Stats -->
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-icon icon-blue">
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="stat-value">{{ attendance_percentage|default:"0" }}%</div>
+        <div class="stat-label">Attendance Rate</div>
+        </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon icon-green">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-value">{{ leave_count|default:"0" }}</div>
+        <div class="stat-label">Leave Requests</div>
+        </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon icon-orange">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="stat-value">{{ complaint_count|default:"0" }}</div>
+        <div class="stat-label">Complaints Filed</div>
+        </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon icon-red">
+            <i class="fas fa-bullhorn"></i>
+        </div>
+        <div class="stat-value">{{ notice_count|default:"0" }}</div>
+        <div class="stat-label">New Notices</div>
+        </div>
+    </div>
+
+<!-- Add other sections from your original home page here -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Toggle the meal status text when checkbox changes
+    document.addEventListener('DOMContentLoaded', function() {
+        const mealToggles = document.querySelectorAll('.meal-toggle input');
+        
+        mealToggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const statusElement = this.parentElement.nextElementSibling;
+                const mealType = this.getAttribute('name');
+                
+                if (this.checked) {
+                    statusElement.textContent = `I'll eat ${mealType}`;
+                    statusElement.classList.remove('status-no');
+                    statusElement.classList.add('status-yes');
+                } else {
+                    statusElement.textContent = `I'll skip ${mealType}`;
+                    statusElement.classList.remove('status-yes');
+                    statusElement.classList.add('status-no');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

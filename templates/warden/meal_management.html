@@ -1,0 +1,70 @@
+{% extends 'warden/base.html' %}
+{% block title %}Meal Management{% endblock %}
+
+{% block content %}
+<h1>Meal Management</h1>
+
+<div class="meal-calendar">
+    <h2>Upcoming Meal Counts</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Breakfast</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in next_days %}
+                <tr>
+                    <td>{{ day|date:"D, M d" }}</td>
+                    <td>{{ meal_data|get_item:day|get_item:'breakfast' }}</td>
+                    <td>{{ meal_data|get_item:day|get_item:'lunch' }}</td>
+                    <td>{{ meal_data|get_item:day|get_item:'dinner' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Lists of students who opted out today -->
+<div class="opted-out-lists mt-4">
+    <h2>Students Not Eating Today</h2>
+    
+    <h3>Breakfast</h3>
+    {% if opted_out_breakfast %}
+    <ul>
+        {% for student in opted_out_breakfast %}
+        <li>Room {{ student.room_number }}: {{ student.first_name }} {{ student.last_name }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>All students are having breakfast today.</p>
+    {% endif %}
+    
+    <h3>Lunch</h3>
+    {% if opted_out_lunch %}
+    <ul>
+        {% for student in opted_out_lunch %}
+        <li>Room {{ student.room_number }}: {{ student.first_name }} {{ student.last_name }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>All students are having lunch today.</p>
+    {% endif %}
+    
+    <h3>Dinner</h3>
+    {% if opted_out_dinner %}
+    <ul>
+        {% for student in opted_out_dinner %}
+        <li>Room {{ student.room_number }}: {{ student.first_name }} {{ student.last_name }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>All students are having dinner today.</p>
+    {% endif %}
+</div>
+{% endblock %} 

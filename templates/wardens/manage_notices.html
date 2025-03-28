@@ -1,0 +1,132 @@
+{% extends 'warden/base.html' %}
+
+{% block title %}Manage Notices{% endblock %}
+
+{% block page_title %}Notice Management{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'create_notice' %}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Create Notice
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notices-list {
+        margin-top: 20px;
+    }
+    .notice-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid #ecf0f1;
+    }
+    .notice-header {
+        padding: 15px 20px;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    .notice-title {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        color: #2c3e50;
+    }
+    .important-badge {
+        background: #e74c3c;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        margin-left: 10px;
+    }
+    .notice-date {
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+    .notice-body {
+        padding: 15px 20px;
+        color: #2c3e50;
+    }
+    .notice-content {
+        margin-bottom: 15px;
+        white-space: pre-line;
+    }
+    .notice-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 0 20px 15px;
+    }
+    .empty-notices {
+        text-align: center;
+        padding: 40px 20px;
+    }
+    .empty-icon {
+        font-size: 48px;
+        color: #bdc3c7;
+        margin-bottom: 15px;
+    }
+    .empty-text {
+        color: #7f8c8d;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if notices %}
+    <div class="notices-list">
+        {% for notice in notices %}
+        <div class="notice-card">
+            <div class="notice-header">
+                <div class="notice-title">
+                    {{ notice.title }}
+                    {% if notice.important %}
+                    <span class="important-badge">IMPORTANT</span>
+                    {% endif %}
+                </div>
+                <div class="notice-date">{{ notice.date_posted|date:"F d, Y" }}</div>
+            </div>
+            <div class="notice-body">
+                <div class="notice-content">{{ notice.content|linebreaks }}</div>
+                <div class="notice-actions">
+                    <a href="{% url 'edit_notice' notice.id %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'delete_notice' notice.id %}" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-notices">
+        <div class="empty-icon">
+            <i class="fas fa-bullhorn"></i>
+        </div>
+        <p class="empty-text">No notices have been created yet.</p>
+        <a href="{% url 'create_notice' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create First Notice
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+<div class="navbar">
+    <h2>HostelPal - Warden Portal</h2>
+    <div class="navbar-links">
+        <a href="{% url 'warden_dashboard' %}">Dashboard</a>
+        <a href="{% url 'manage_notices' %}">Notices</a>
+        <a href="{% url 'manage_attendance' %}">Attendance</a>
+        <a href="{% url 'logout' %}">Logout</a>
+    </div>
+</div> 

@@ -1,0 +1,258 @@
+{% extends 'student_base.html' %}
+
+{% block title %}My Account - HostelPal{% endblock %}
+
+{% block page_title %}Student Account{% endblock %}
+
+{% block extra_css %}
+<style>
+    .account-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
+    .account-sidebar {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    .profile-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+    }
+    .profile-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: white;
+        margin: 0 auto 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        color: #3498db;
+        font-weight: 600;
+    }
+    .profile-name {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    .profile-role {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    .profile-details {
+        padding: 20px;
+    }
+    .detail-item {
+        margin-bottom: 15px;
+    }
+    .detail-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-bottom: 5px;
+    }
+    .detail-value {
+        font-size: 16px;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    .account-content {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+    .tab-nav {
+        display: flex;
+        background: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+    .tab-btn {
+        padding: 15px 20px;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #7f8c8d;
+        transition: all 0.3s;
+    }
+    .tab-btn.active {
+        color: #3498db;
+        box-shadow: inset 0 -2px 0 #3498db;
+    }
+    .tab-content {
+        padding: 20px;
+    }
+    .tab-pane {
+        display: none;
+    }
+    .tab-pane.active {
+        display: block;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px 15px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+    }
+    th {
+        font-weight: 500;
+        color: #2c3e50;
+        background: #f8f9fa;
+    }
+    .payment-form {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="account-container">
+    <div class="account-sidebar">
+        <div class="profile-header">
+            <div class="profile-image">
+                {% if request.user.student.first_name %}
+                    {{ request.user.student.first_name|first }}{{ request.user.student.last_name|first }}
+                {% else %}
+                    {{ request.user.username|first }}
+                {% endif %}
+            </div>
+            <div class="profile-name">
+                {% if request.user.student.first_name %}
+                    {{ request.user.student.first_name }} {{ request.user.student.last_name }}
+                {% else %}
+                    {{ request.user.username }}
+                {% endif %}
+            </div>
+            <div class="profile-role">Student</div>
+        </div>
+        <div class="profile-details">
+            <div class="detail-item">
+                <div class="detail-label">Room Number</div>
+                <div class="detail-value">{{ request.user.student.room_number }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Email</div>
+                <div class="detail-value">{{ request.user.email }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Phone</div>
+                <div class="detail-value">{{ request.user.student.phone_number }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Joined On</div>
+                <div class="detail-value">{{ request.user.student.registration_date|date:"F d, Y" }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="account-content">
+        <div class="tab-nav">
+            <button class="tab-btn active" data-target="fees">Fee Payments</button>
+            <button class="tab-btn" data-target="settings">Account Settings</button>
+            <button class="tab-btn" data-target="security">Security</button>
+        </div>
+        
+        <div class="tab-content">
+            <div class="tab-pane active" id="fees">
+                <form method="post" action="{% url 'pay_fees' %}" class="payment-form">
+                    {% csrf_token %}
+                    <h3>Make a Payment</h3>
+                    <div class="form-group">
+                        <label for="amount">Amount (₹)</label>
+                        <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount" min="0" required>
+                    </div>
+                    <button type="submit" class="btn">
+                        <i class="fas fa-money-bill-wave"></i> Pay Fees
+                    </button>
+                </form>
+                
+                <h3>Payment History</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.payment_date|date:"F d, Y" }}</td>
+                            <td>₹{{ payment.amount }}</td>
+                            <td><span class="badge badge-success">Completed</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" style="text-align: center;">No payment records found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="tab-pane" id="settings">
+                <h3>Account Settings</h3>
+                <p>You can update your profile information and preferences here.</p>
+                
+                <!-- Add account settings form here -->
+            </div>
+            
+            <div class="tab-pane" id="security">
+                <h3>Security Settings</h3>
+                <p>Manage your password and account security.</p>
+                
+                <a href="{% url 'password_change' %}" class="btn">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and panes
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Show corresponding pane
+                const target = this.getAttribute('data-target');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+    });
+</script>
+{% endblock %}

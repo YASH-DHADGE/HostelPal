@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-4">Meal Preferences</h1>
+    
+    <div class="alert alert-info">
+        Select which meals you'll be eating at the mess for the coming days.
+    </div>
+    
+    <div class="row">
+        {% for day in next_days %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <strong>{{ day|date:"l, F d" }}</strong>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'update_meal_preference' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="date" value="{{ day|date:'Y-m-d' }}">
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="breakfast" id="breakfast_{{ day|date:'Ymd' }}" 
+                                {% if existing_preferences|get_item:day.isoformat|get_item:'breakfast'|default:True %}checked{% endif %}>
+                            <label class="form-check-label" for="breakfast_{{ day|date:'Ymd' }}">
+                                Breakfast
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="lunch" id="lunch_{{ day|date:'Ymd' }}" 
+                                {% if existing_preferences|get_item:day.isoformat|get_item:'lunch'|default:True %}checked{% endif %}>
+                            <label class="form-check-label" for="lunch_{{ day|date:'Ymd' }}">
+                                Lunch
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="dinner" id="dinner_{{ day|date:'Ymd' }}" 
+                                {% if existing_preferences|get_item:day.isoformat|get_item:'dinner'|default:True %}checked{% endif %}>
+                            <label class="form-check-label" for="dinner_{{ day|date:'Ymd' }}">
+                                Dinner
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

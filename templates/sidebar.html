@@ -1,0 +1,19 @@
+<!-- Student attendance link in the student section -->
+{% if user.is_authenticated and not user.is_staff and not user.is_superuser %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'student_attendance' %}">
+        <i class="fas fa-calendar-check"></i>
+        <span>My Attendance</span>
+    </a>
+</li>
+{% endif %}
+
+<!-- Warden attendance link in the warden section -->
+{% if user.is_authenticated and user|is_warden %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'warden_attendance' %}">
+        <i class="fas fa-clipboard-list"></i>
+        <span>Manage Attendance</span>
+    </a>
+</li>
+{% endif %} 
