@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-t6jrd03#@s&yvk!^n*v*5c*m_%r9yshyhsx1^o7@vs_g09k95f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # Temporarily set to True for debugging
 
-ALLOWED_HOSTS = [*]  # Add your domain or IP addresses here
+ALLOWED_HOSTS = ['https://hostelpal.onrender.com']  # Add your domain or IP addresses here
 
 # Application definition
 INSTALLED_APPS = [
