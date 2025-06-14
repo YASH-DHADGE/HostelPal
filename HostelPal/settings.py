@@ -49,6 +49,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'HostelPal.urls'
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',  # Wildcard for all Render subdomains
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -145,6 +149,12 @@ CSRF_COOKIE_SECURE = False     # Set to True only if using HTTPS
 
 # Email settings (for development - console backend will print emails to console)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# At the BOTTOM of settings.py:
+if not DEBUG:  # Only apply in production
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # For production, you would use SMTP:
 """
