@@ -385,8 +385,7 @@ This project is licensed under the MIT License.
 
 ## 👥 Authors
 
-- **YASH-DHADGE** - *Project Lead*
-- **SOHAM3705** - *Contributor*
+- **YASH-DHADGE**
 
 ## 🙏 Acknowledgments
 
