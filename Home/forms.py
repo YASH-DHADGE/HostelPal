@@ -3,9 +3,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
 import django
 django.setup()
 
+from django.contrib.auth.models import User
 from django import forms
 from .models import Leave, Complaint, Student, Message, Attendance, MealPreference
-from django.contrib.auth.models import User
 
 class LeaveApplicationForm(forms.ModelForm):
     class Meta:

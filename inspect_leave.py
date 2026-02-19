@@ -1,5 +1,5 @@
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'agent.settings')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'agent.settings'
 import django
 django.setup()
 
