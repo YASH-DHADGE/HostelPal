@@ -1,3 +1,8 @@
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+import django
+django.setup()
+
 from django import forms
 from django.contrib.auth.models import User
 from .models import Leave, Complaint, Student, Message, Attendance, MealPreference  # Assuming Leave model exists
