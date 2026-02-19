@@ -1,5 +1,5 @@
 import os
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
 import django
 django.setup()
 
@@ -16,18 +16,17 @@ class LeaveApplicationForm(forms.ModelForm):
             'to_date': forms.DateInput(attrs={'type': 'date'}),
             'reason': forms.Textarea(attrs={'rows': 4}),
         }
-    
+
     def clean(self):
         cleaned_data = super().clean()
         from_date = cleaned_data.get('from_date')
         to_date = cleaned_data.get('to_date')
-        
+
         if from_date and to_date:
             if to_date < from_date:
                 raise forms.ValidationError("End date cannot be before start date")
-        
-        return cleaned_data
 
+        return cleaned_data
 
 class RegistrationForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True)
@@ -35,13 +34,13 @@ class RegistrationForm(forms.ModelForm):
     email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=50, required=False)
     last_name = forms.CharField(max_length=50, required=False)
-    room_number = forms.CharField(max_length=10, required=True)  # modified this line
-    phone_number = forms.CharField(max_length=15, required=True)  # modified this line
+    room_number = forms.CharField(max_length=10, required=True)
+    phone_number = forms.CharField(max_length=15, required=True)
 
     class Meta:
         model = User
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'room_number',
-                  'phone_number']  # modified this line
+                  'phone_number']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -73,7 +72,7 @@ class ComplaintForm(forms.ModelForm):
 class MessageForm(forms.ModelForm):
     class Meta:
         model = Message
-        fields = ['content']  # Or whatever fields you have in your Message model
+        fields = ['content']
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100)
@@ -102,11 +101,11 @@ class AttendanceForm(forms.ModelForm):
 
 class BulkAttendanceForm(forms.Form):
     date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
-    
+
     def __init__(self, *args, **kwargs):
         students = kwargs.pop('students', None)
         super(BulkAttendanceForm, self).__init__(*args, **kwargs)
-        
+
         if students:
             for student in students:
                 self.fields[f'status_{student.id}'] = forms.ChoiceField(

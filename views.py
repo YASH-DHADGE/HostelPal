@@ -1,5 +1,7 @@
 import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+import django
+django.setup()
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
