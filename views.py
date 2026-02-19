@@ -64,6 +64,3 @@ def raw_sql_example(request):
         cursor.execute("DELETE FROM auth_user WHERE username = %s", ['john'])
 
     return render(request, 'raw_sql_example.html', {'user_data': user_data})
-
-
-
