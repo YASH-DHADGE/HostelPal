@@ -8,3 +8,7 @@ mysqlclient  # If using MySQL
 pillow  # If working with images
 pandas
 openpyxl
+
+# Added by CI healing agent
+pytest>=7.0
+pytest-django>=4.5
