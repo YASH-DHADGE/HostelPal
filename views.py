@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import connection
+# from pytest import mark
 
 def register(request):
     if request.method == 'POST':
@@ -64,6 +65,3 @@ def raw_sql_example(request):
         cursor.execute("DELETE FROM auth_user WHERE username = %s", ['john'])
 
     return render(request, 'raw_sql_example.html', {'user_data': user_data})
-
-
-
