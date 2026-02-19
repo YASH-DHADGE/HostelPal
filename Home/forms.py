@@ -4,8 +4,8 @@ import django
 django.setup()
 
 from django import forms
+from .models import Leave, Complaint, Student, Message, Attendance, MealPreference
 from django.contrib.auth.models import User
-from .models import Leave, Complaint, Student, Message, Attendance, MealPreference  # Assuming Leave model exists
 
 class LeaveApplicationForm(forms.ModelForm):
     class Meta:
