@@ -1,5 +1,5 @@
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
 import django
 django.setup()
 from django.shortcuts import render, redirect

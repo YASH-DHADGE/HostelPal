@@ -1,5 +1,5 @@
 import os
-os.environ['DJANGO_SETTINGS_MODULE'] = 'your_project_name.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'agent.settings'
 import django
 django.setup()
 
