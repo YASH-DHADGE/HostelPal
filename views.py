@@ -14,10 +14,13 @@ def register(request):
             if User.objects.filter(username=username).exists():
                 messages.error(request, 'Username already exists')
             else:
-                user = User.objects.create_user(username=username, password=password1)
-                user.save()
-                messages.success(request, 'Account created successfully')
-                return redirect('login')
+                try:
+                    user = User.objects.create_user(username=username, password=password1)
+                    user.save()
+                    messages.success(request, 'Account created successfully')
+                    return redirect('login')
+                except Exception as e:
+                    messages.error(request, f'Error creating user: {e}')
         else:
             messages.error(request, 'Passwords do not match')
     
@@ -42,27 +45,31 @@ def home(request):
 def raw_sql_example(request):
     # Example of a raw SQL query to create a user
     user_data = {}
-    with connection.cursor() as cursor:
-        cursor.execute("INSERT INTO auth_user (username, password) VALUES (%s, %s)", ['john', 'password123'])
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO auth_user (username, password) VALUES (%s, %s)", ['john', 'password123'])
 
-    # Example of a raw SQL query to retrieve a user
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT * FROM auth_user WHERE username = %s", ['john'])
-        row = cursor.fetchone()
-        if row:
-            user_data = {
-                'id': row[0],
-                'username': row[1],
-                'password': row[2],
-                # ...other fields...
-            }
+        # Example of a raw SQL query to retrieve a user
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM auth_user WHERE username = %s", ['john'])
+            row = cursor.fetchone()
+            if row:
+                user_data = {
+                    'id': row[0],
+                    'username': row[1],
+                    'password': row[2],
+                    # ...other fields...
+                }
 
-    # Example of a raw SQL query to update a user
-    with connection.cursor() as cursor:
-        cursor.execute("UPDATE auth_user SET email = %s WHERE username = %s", ['john@example.com', 'john'])
+        # Example of a raw SQL query to update a user
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE auth_user SET email = %s WHERE username = %s", ['john@example.com', 'john'])
 
-    # Example of a raw SQL query to delete a user
-    with connection.cursor() as cursor:
-        cursor.execute("DELETE FROM auth_user WHERE username = %s", ['john'])
+        # Example of a raw SQL query to delete a user
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM auth_user WHERE username = %s", ['john'])
+    except Exception as e:
+        print(f"Error executing raw SQL: {e}")
+        user_data = {}
 
     return render(request, 'raw_sql_example.html', {'user_data': user_data})
