@@ -41,6 +41,7 @@ def home(request):
 
 def raw_sql_example(request):
     # Example of a raw SQL query to create a user
+    user_data = {}
     with connection.cursor() as cursor:
         cursor.execute("INSERT INTO auth_user (username, password) VALUES (%s, %s)", ['john', 'password123'])
 
@@ -48,12 +49,13 @@ def raw_sql_example(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM auth_user WHERE username = %s", ['john'])
         row = cursor.fetchone()
-        user_data = {
-            'id': row[0],
-            'username': row[1],
-            'password': row[2],
-            # ...other fields...
-        }
+        if row:
+            user_data = {
+                'id': row[0],
+                'username': row[1],
+                'password': row[2],
+                # ...other fields...
+            }
 
     # Example of a raw SQL query to update a user
     with connection.cursor() as cursor:
